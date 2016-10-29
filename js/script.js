@@ -1,193 +1,160 @@
-$(function(){
+$(function () {
 
-  'use strict';
+	
 
+	var $input = $('.searchInput');
+	var $button = $('.searchButton');
+	var $content = $('.content');
 
-var test = [
-{
-  title: 'What is the capital of Ukraine?',
-  points: 1,
-  answers: [{
-    answer: 'Kyiv',
-    right: true
-  },
-  {
-    answer: 'Poltava',
-    right: false
-  },
-  {
-    answer: 'Lviv',
-    right: false
-  }]
-},
-{
-  title: 'When was Lviv founded?',
-  points: 1,
-  answers: [{
-    answer: 'in 1992',
-    right: false
-  },
-  {
-    answer: 'in 1345',
-    right: false
-  },
-  {
-    answer: 'in 1256',
-    right: true
-  }]
-},
-{
-  title: 'Who founded Lviv?',
-  points: 1,
-  answers: [{
-    answer: 'Volodymur',
-    right: false
-  },
-  {
-    answer: 'Danulo',
-    right: true
-  },
-  {
-    answer: 'Ihor',
-    right: false
-  }]
-},
-{
-  title: 'Who write "Kobzar" ?',
-  points: 1,
-  answers: [{
-    answer: 'Lesja Ukrainka',
-    right: false
-  },
-  {
-    answer: 'Taras Shevchenko',
-    right: true
-  },
-  {
-    answer: 'Marko Vovchok',
-    right: false
-  }]
-}
-];
+	function appendResultToPage(page, image) {
+			$content.append('<div class="first"><a href="'+ page +'" target="_blank"><img src="' + image + '"></a></div>');
+	};
+	
+	function cantFoundResult() {
+			$content.append('<div class="first"><p>This image not found</p></div>');
+	}
 
+	function deleteResultRequestFromHtml() {
+		
+		$('.first').remove();
+	}
 
-var localTest = JSON.stringify( test );
-localStorage.setItem( "test", localTest );
+function getDataSearchRequest() {
 
+		deleteResultRequestFromHtml();
+		
+	$.ajax({
+		url: 'https://pixabay.com/api/?key=3044055-26f05a0ce42eac2412c64079c&q=' + encodeURIComponent($input.val()),
+		dataType: 'jsonp',
 
-var recievedTest = localStorage.getItem( "test" );
-var readyTest = JSON.parse( recievedTest );
+		success:	function (data) {
 
+			if ( $input.val() === '') {
+				 return false;
+				} else 
 
-var $html = $( '#template' ).html();
-var content = tmpl($html, {
-  data: readyTest
-});
+			if ( parseInt(data.totalHits) > 0 ) 
+				$.each( data.hits, function(URL, hit) {
 
+					appendResultToPage ( hit.pageURL, hit.previewURL );
 
-$( '#formId' ).prepend( content );
-
-var $inputs = $('input:checkbox');
-$inputs.on( 'click', function() {
-  $(this).parent().siblings().children().each(function(){
-    if ( $(this).attr('disabled') ) {
-      $(this).attr('disabled', false);
-    } else {
-      $(this).attr('disabled', true);
-    }
-  });
-});
-
-var checkResults = function(e) {
-  e.preventDefault();
-  var rightAnswers = [];
-  var getRightAnswers = function() {
-    for ( var i = 0; i < readyTest.length; i++ ) {
-      var testAnswers = readyTest[i].answers;
-      for (var j = 0; j < testAnswers.length; j++) {
-        var currentAnswer = readyTest[i].answers[j].right;
-        rightAnswers.push(currentAnswer);
-      }
-    }
-  };
-
-  var givenAnswers = [];
-  var getGivenAnswers = function() {
-    $inputs.each(function () {
-      if ( $(this).prop('checked') ) {
-        givenAnswers.push(true);
-      } else {
-        givenAnswers.push(false);
-      }
-    });
-  };
-
-  var answered = 0;
-  var check = function () {
-    for (var i = 0; i < rightAnswers.length; i++) {
-      if ( rightAnswers[i] === true ) {
-        if ( rightAnswers[i] === givenAnswers[i] ) {
-          answered++;
-        }
-      }
-    }
-  };
-
-  var questionsQuantity = 0;
-  var sumQuestions = function () {
-    for (var i = 0; i < readyTest.length; i++) {
-      questionsQuantity++;
-    }
-  };
-
-  var passed = 0;
-  var testOK= false;
-  var testPassed = function () {
-    passed = answered /questionsQuantity;
-    if ( passed > 0.5 ) {
-      testOK = true;
-    }
-  };
-
-  getRightAnswers();
-  console.log('rightAnswers = ', rightAnswers);
-
-  getGivenAnswers();
-  console.log('givenAnswers = ', givenAnswers);
-
-  check();
-  console.log('answered = ', answered);
-
-  sumQuestions();
-
-  testPassed();
-  console.log('passed = ', passed);
-
-  console.log('testOK = ', testOK);
-
-
-
-  var $modal;
-  var $body = $( 'body' );
-  if ( testOK ){
-    $modal = ('<div class="mymodal"><div class="mymodal-inner"><h1 class="text-center">You passed the test!</h1><h1 class="text-center">Right is '+
-     answered +', from '+ questionsQuantity +'</h1><p class="text-center"><img src="images/image.png"></p><a class="center-block btn btn-primary" id="exit">Exit</a></div></div>');
-  } else {
-    $modal = ('<div class="mymodal"><div class="mymodal-inner"><h1 class="text-center">You didn\'t pass the test!</h1><h1 class="text-center">Right is '+
-     answered +', from '+ questionsQuantity +'</h1><p class="text-center"><img src="images/image1.png"></p><a class="center-block btn btn-primary" id="exit">Exit</a></div></div>');
-  }
-
-  $body.append($modal);
-  var $exit = $( '#exit' );
-  var reset = function() {
-    $inputs.prop( 'checked', false ).prop( 'disabled', false );
-    $( '.mymodal' ).remove();
-    return false;
-  };
-
-  $exit.on( 'click', reset );
+				});
+			
+			else {
+				 cantFoundResult ();
+				}
+		}
+	});
 };
 
-$( '#check-results' ).on( 'click', checkResults );
+	$input.keydown(function(event) {
+		if ( event.keyCode == 13) {
+			getDataSearchRequest();
+		}
+	});
+
+$button.on('click', getDataSearchRequest ); 
+
+
+	
+ var Human = function (info){
+ 		this.name = info.name;
+ 		this.age = info.age;
+ 		this.sex = info.sex;
+ 		this.height = info.height;
+ 		this.weight = info.weight;
+ };
+
+
+ function Worker(info) {
+ 	Human.apply(this, [info]);
+ 	this.job = info.job; 
+ 	this.salary = info.salary;
+
+}; 
+
+function Student (info) {
+	Human.apply(this, [info]),
+	this.study = info.study;
+	this.scholarships = info.scholarships;
+	
+};
+
+Worker.prototype = Object.create(Human.prototype);
+Worker.prototype.constructor = Worker;
+Worker.prototype.toWork = function () {
+	
+	console.log(this.name + ' is working');
+}
+
+
+Student.prototype = Object.create(Human.prototype);
+Student.prototype.constructor = Student;
+Student.prototype.toWatch = function () {
+	console.log (this.name + ' is watching TVShow');
+}
+
+
+var Brendon = {
+	name: 'Brendon',
+	age: 33,
+	sex: 'male',
+	height: 199,
+	weight: 83,
+	job: ' artist',
+	salary: 10000,
+	study: 'California University',
+	scholarships: 1000
+
+};
+
+var Dilan = {
+	name: 'Dilan',
+	age: 26,
+	sex: 'male',
+	height: 186,
+	weight: 79,
+	job: 'singer',
+	salary: 1200,
+	study: 'Paris academy',
+	scholarships: 2000
+
+};
+
+var Brenda = {
+	name: 'Brenda',
+	age: 26,
+	sex: 'female', 
+	height: 175,
+	weight: 59,
+	job: 'dancer', 
+	salary: 11000,
+	study: 'Paris University',
+	scholarships: 500
+};
+
+var Oliver = {
+	name: 'Oliver',
+	age: 37,
+	sex: 'male',
+	height: 182,
+	weight: 75,
+	job: 'teacher',
+	salary: 0,
+	study: 'Dubai Academy',
+	scholarships: ' 100 '
+}
+
+var newWorker = new Worker (Brendon);
+var newStudent = new Student (Dilan);
+var newPerson = new Student(Brenda);
+var Aria = new Worker (Oliver);
+
+console.log(newWorker);
+console.log(newStudent);
+console.log(newPerson);
+console.log(Aria);
+newWorker.toWork();
+newStudent.toWatch();
 
 });

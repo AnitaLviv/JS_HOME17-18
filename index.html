@@ -1,33 +1,23 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>TEST</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="js/tm.js"></script>
-    <script src="js/script.js"></script>
+	<meta charset="UTF-8">
+	<title>Google</title>
+	<link rel="stylesheet" href="css/style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="js/script.js"></script>
 </head>
 <body>
-<div class="wrapp">
-    <div class="col-md-6 col-md-offset-3">
-        <h2 class="text-center">Simple test</h2>
-        <form class="form-block" id="formId">
-            <script type="text/template" id="template">
-                <% for (var i = 0; i < data.length; i++) { %>
-                <h4><strong><u><%= data[i].title %></u></strong></h4>
-                <div class="form-group">
-                    <label class="center-block"><input type="checkbox" id="<%= i+1 %>"><%= data[i].answers[0].answer %></label>
-                    <label class="center-block"><input type="checkbox" id="<%= i+1 %>"><%= data[i].answers[1].answer %></label>
-                    <label class="center-block"><input type="checkbox" id="<%= i+1 %>"><%= data[i].answers[2].answer %></label>
-                </div>
-                <% } %>
-            </script>
-            <button class="center-block btn btn-primary" id="check-results">Check!</button>
-        </form>
-    </div>
-</div>
+<p class="google"><img src="images/google.png" alt="Google-image" width="350px"></p>
+	<div class="wrap">
+		<div class="main">
+			<input type="text" class="searchInput" placeholder="Введть пошуковий запит або URL адресу">
+			<input type="submit" value="Поиск" class="searchButton ">
+		</div>
+		<div class="content">
+		</div>
+		
+	</div>
 </body>
 </html>
