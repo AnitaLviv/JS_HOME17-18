@@ -1,80 +1,49 @@
 module.exports = function(grunt) {
 
   grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
 
-      jshint: {
-    options: {
-       curly: true,
-       eqeqeq: true,
-       immed: true,
-       latedef: true,
-       newcap: true,
-       noarg: true,
-       sub: true,
-       undef: true,
-       eqnull: true,
-       browser: true,
-       globals: {
-           jQuery: true,
-           $: true,
-        console: true 
-   }
-    
-  },
-     "<%= pkg.name %>": {
-       src: ['js/**/*.js']
- }
-       },
-
-     concat: {
-        
-
-
-
-         dist: {
-        src: ['js/script1.js', 'js/script2.js'],
-        dest: 'new/build.js'
-          }
-       },
-
-     uglify: {
-
- options: {
-         stripBanners: true,
-         banner: '/*"<%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>"*/\n' 
+    concat: {
+      options: {
+        separator: ';'
       },
-        build: {
-        src: "new/build.js",
-        dest:"new/build.min.js"
-       }
-
-     },
-
-   cssmin: {
-       with_banner: {
-         options: {
-            banner:"/*My first minified CSS*/"
-       },
-
-            files: {
-              'new/style.min.css' : ['css/style1.css','css/style2.css']
-              
-               }
-
-         }
+      dist: {
+        src: ['js/src/*.js'],
+        dest: 'js/dist/script.main.js'
       }
+    },
+    uglify: {
+      dist: {
+        src: ['js/dist/script.main.js'],
+        dest: 'js/dist/script.main.min.js'
+      }
+    },
 
-   });
+    concat_css: {
+      options: {
+     
+      },
+      all: {
+        src: ["css/src/*.css"],
+        dest: "css/dist/style.main.css"
+      },
+    },
+    cssmin: {
+      options: {
+        shorthandCompacting: false,
+        roundingPrecision: -1
+      },
+      target: {
+        files: {
+        'css/dist/style.main.min.css': ['css/dist/style.main.css']
+        }
+      }
+    } 
+  });
 
- grunt.loadNpmTasks('grunt-contrib-jshint');
- grunt.loadNpmTasks('grunt-contrib-concat');
- grunt.loadNpmTasks('grunt-contrib-uglify');
- grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-concat-css');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
 
- grunt.registerTask('default',['jshint','concat','uglify','cssmin']);
-
- };
-
-
-   
+  grunt.registerTask('default', ['concat', 'uglify', 'concat_css', 'cssmin']);
+};
